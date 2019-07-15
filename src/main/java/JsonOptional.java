@@ -7,37 +7,37 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public final class JSONOptional<T> {
-  private static final JSONOptional<?> EMPTY = new JSONOptional<>(null);
-  private static final JSONOptional<?> UNSET = new JSONOptional<>();
+public final class JsonOptional<T> {
+  private static final JsonOptional<?> EMPTY = new JsonOptional<>(null);
+  private static final JsonOptional<?> UNSET = new JsonOptional<>();
 
   private final Optional<T> value;
 
-  private JSONOptional() {
+  private JsonOptional() {
     this.value = Optional.empty();
   }
 
-  private JSONOptional(final T value) {
+  private JsonOptional(final T value) {
     this.value = Optional.ofNullable(value);
   }
 
-  public static <T> JSONOptional<T> empty() {
+  public static <T> JsonOptional<T> empty() {
     @SuppressWarnings("unchecked")
-    final JSONOptional<T> t = (JSONOptional<T>) EMPTY;
+    final JsonOptional<T> t = (JsonOptional<T>) EMPTY;
     return t;
   }
 
-  public static <T> JSONOptional<T> unset() {
+  public static <T> JsonOptional<T> unset() {
     @SuppressWarnings("unchecked")
-    final JSONOptional<T> t = (JSONOptional<T>) UNSET;
+    final JsonOptional<T> t = (JsonOptional<T>) UNSET;
     return t;
   }
 
-  public static <T> JSONOptional<T> of(T value) {
-    return new JSONOptional<>(Objects.requireNonNull(value));
+  public static <T> JsonOptional<T> of(T value) {
+    return new JsonOptional<>(Objects.requireNonNull(value));
   }
 
-  public static <T> JSONOptional<T> ofNullable(T value) {
+  public static <T> JsonOptional<T> ofNullable(T value) {
     return value == null ? empty() : of(value);
   }
 
@@ -78,7 +78,7 @@ public final class JSONOptional<T> {
     }
   }
 
-  public JSONOptional<T> filter(final Predicate<? super T> predicate) {
+  public JsonOptional<T> filter(final Predicate<? super T> predicate) {
     Objects.requireNonNull(predicate);
     if (!isPresent()) {
       return this;
@@ -87,34 +87,34 @@ public final class JSONOptional<T> {
     }
   }
 
-  public <U> JSONOptional<U> map(final Function<? super T, ? extends U> mapper) {
+  public <U> JsonOptional<U> map(final Function<? super T, ? extends U> mapper) {
     Objects.requireNonNull(mapper);
     if (!isPresent()) {
       return empty();
     } else {
-      return JSONOptional.ofNullable(mapper.apply(value.get()));
+      return JsonOptional.ofNullable(mapper.apply(value.get()));
     }
   }
 
-  public <U> JSONOptional<U> flatMap(
-      final Function<? super T, ? extends JSONOptional<? extends U>> mapper) {
+  public <U> JsonOptional<U> flatMap(
+      final Function<? super T, ? extends JsonOptional<? extends U>> mapper) {
     Objects.requireNonNull(mapper);
     if (!isPresent()) {
       return empty();
     } else {
       @SuppressWarnings("unchecked")
-      JSONOptional<U> r = (JSONOptional<U>) mapper.apply(value.get());
+      JsonOptional<U> r = (JsonOptional<U>) mapper.apply(value.get());
       return Objects.requireNonNull(r);
     }
   }
 
-  public JSONOptional<T> or(final Supplier<? extends JSONOptional<? extends T>> supplier) {
+  public JsonOptional<T> or(final Supplier<? extends JsonOptional<? extends T>> supplier) {
     Objects.requireNonNull(supplier);
     if (isPresent()) {
       return this;
     } else {
       @SuppressWarnings("unchecked")
-      JSONOptional<T> r = (JSONOptional<T>) supplier.get();
+      JsonOptional<T> r = (JsonOptional<T>) supplier.get();
       return Objects.requireNonNull(r);
     }
   }
@@ -157,11 +157,11 @@ public final class JSONOptional<T> {
       return true;
     }
 
-    if (!(obj instanceof JSONOptional)) {
+    if (!(obj instanceof JsonOptional)) {
       return false;
     }
 
-    JSONOptional<?> other = (JSONOptional<?>) obj;
+    JsonOptional<?> other = (JsonOptional<?>) obj;
     return Objects.equals(value, other.value);
   }
 
@@ -173,10 +173,10 @@ public final class JSONOptional<T> {
   @Override
   public String toString() {
     if (isPresent()) {
-      return String.format("JSONOptional[%s]", value);
+      return String.format("JsonOptional[%s]", value);
     } else if (isSet()) {
-      return "JSONOptional[null]";
+      return "JsonOptional[null]";
     }
-    return "JSONOptional.unset";
+    return "JsonOptional.unset";
   }
 }
