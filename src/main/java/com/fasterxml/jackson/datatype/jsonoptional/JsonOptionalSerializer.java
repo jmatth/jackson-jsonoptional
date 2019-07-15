@@ -1,3 +1,5 @@
+package com.fasterxml.jackson.datatype.jsonoptional;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.JavaType;

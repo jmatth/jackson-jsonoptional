@@ -1,3 +1,5 @@
+package com.fasterxml.jackson.datatype.jsonoptional;
+
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.module.SimpleDeserializers;

@@ -1,3 +1,5 @@
+package com.fasterxml.jackson.datatype.jsonoptional;
+
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
@@ -173,10 +175,10 @@ public final class JsonOptional<T> {
   @Override
   public String toString() {
     if (isPresent()) {
-      return String.format("JsonOptional[%s]", value);
+      return String.format("com.fasterxml.jackson.datatype.jsonoptional.JsonOptional[%s]", value);
     } else if (isSet()) {
-      return "JsonOptional[null]";
+      return "com.fasterxml.jackson.datatype.jsonoptional.JsonOptional[null]";
     }
-    return "JsonOptional.unset";
+    return "com.fasterxml.jackson.datatype.jsonoptional.JsonOptional.unset";
   }
 }
