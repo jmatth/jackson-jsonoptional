@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.datatype.jsonoptional;
+package com.jmatth.jackson.jsonoptional;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;

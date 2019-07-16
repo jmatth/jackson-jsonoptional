@@ -1,21 +1,10 @@
-package com.fasterxml.jackson.datatype.jsonoptional;
+package com.jmatth.jackson.jsonoptional;
 
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.module.SimpleDeserializers;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.module.SimpleSerializers;
 
-public class JsonOptionalModule extends Module {
-  @Override
-  public String getModuleName() {
-    return getClass().getName();
-  }
-
-  @Override
-  public Version version() {
-    return Version.unknownVersion();
-  }
-
+public class JsonOptionalModule extends SimpleModule {
   @Override
   public void setupModule(final SetupContext context) {
     final SimpleDeserializers deserializers = new SimpleDeserializers();
