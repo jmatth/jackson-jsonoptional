@@ -1,50 +1,66 @@
 package com.jmatth.jackson.jsonoptional;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanProperty;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.ContextualSerializer;
-import java.io.IOException;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import com.fasterxml.jackson.databind.ser.std.ReferenceTypeSerializer;
+import com.fasterxml.jackson.databind.util.NameTransformer;
 
 @SuppressWarnings("rawtypes")
-public class JsonOptionalSerializer extends JsonSerializer<JsonOptional>
-    implements ContextualSerializer {
+public class JsonOptionalSerializer extends ReferenceTypeSerializer<JsonOptional<?>> {
 
-  private JavaType _valueType;
-
-  @Override
-  public JsonSerializer<?> createContextual(
-      final SerializerProvider prov, final BeanProperty property) throws JsonMappingException {
-    final JavaType javaType = property.getType().containedType(0);
-    final JsonOptionalSerializer jsonOptionalSerializer = new JsonOptionalSerializer();
-    jsonOptionalSerializer._valueType = javaType;
-    return jsonOptionalSerializer;
+  public JsonOptionalSerializer(
+      final ReferenceTypeSerializer<?> base,
+      final BeanProperty property,
+      final TypeSerializer vts,
+      final JsonSerializer<?> valueSer,
+      final NameTransformer unwrapper,
+      final Object suppressableValue,
+      final boolean suppressNulls) {
+    super(base, property, vts, valueSer, unwrapper, suppressableValue, suppressNulls);
   }
 
   @Override
-  public void serialize(
-      final JsonOptional value, final JsonGenerator gen, final SerializerProvider serializers)
-      throws IOException {
-    if (!value.isPresent()) {
-      // If we get to this point Jackson has already decided to write out the key,
-      // so we need to write null to avoid producing an error.
-      gen.writeNull();
-      return;
-    }
-    final JsonSerializer<Object> valueSerializer = serializers.findValueSerializer(_valueType);
-    valueSerializer.serialize(value.get(), gen, serializers);
+  protected ReferenceTypeSerializer<JsonOptional<?>> withResolved(
+      final BeanProperty prop,
+      final TypeSerializer vts,
+      final JsonSerializer<?> valueSer,
+      final NameTransformer unwrapper) {
+    return new JsonOptionalSerializer(
+        this, prop, vts, valueSer, unwrapper, _suppressableValue, _suppressNulls);
+  }
+
+  @Override
+  public ReferenceTypeSerializer<JsonOptional<?>> withContentInclusion(
+      final Object suppressableValue, final boolean suppressNulls) {
+    return new JsonOptionalSerializer(
+        this,
+        _property,
+        _valueTypeSerializer,
+        _valueSerializer,
+        _unwrapper,
+        suppressableValue,
+        suppressNulls);
+  }
+
+  @Override
+  protected boolean _isValuePresent(final JsonOptional<?> value) {
+    return value.isPresent();
+  }
+
+  @Override
+  protected Object _getReferenced(final JsonOptional<?> value) {
+    return value.get();
+  }
+
+  @Override
+  protected Object _getReferencedIfPresent(final JsonOptional<?> value) {
+    return value.orElse(null);
   }
 
   @Override
   public boolean isEmpty(final SerializerProvider provider, final JsonOptional value) {
     return !value.isPresent();
-  }
-
-  @Override
-  public boolean isUnwrappingSerializer() {
-    return true;
   }
 }

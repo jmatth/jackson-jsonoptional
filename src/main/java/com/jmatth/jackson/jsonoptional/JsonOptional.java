@@ -16,7 +16,7 @@ public final class JsonOptional<T> {
   private final Optional<T> value;
 
   private JsonOptional() {
-    this.value = Optional.empty();
+    this.value = null;
   }
 
   private JsonOptional(final T value) {
