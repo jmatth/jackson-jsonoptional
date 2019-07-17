@@ -10,66 +10,70 @@ import com.fasterxml.jackson.databind.util.NameTransformer;
 @SuppressWarnings("rawtypes")
 public class JsonOptionalSerializer extends ReferenceTypeSerializer<JsonOptional<?>> {
 
-  public JsonOptionalSerializer(
-      ReferenceType fullType,
-      boolean staticTyping,
-      TypeSerializer vts,
-      JsonSerializer<Object> ser) {
-    super(fullType, staticTyping, vts, ser);
-  }
-
-  public JsonOptionalSerializer(
-      JsonOptionalSerializer base,
-      BeanProperty property,
-      TypeSerializer vts,
-      JsonSerializer<?> valueSer,
-      NameTransformer unwrapper,
-      Object suppressableValue,
-      boolean suppressNulls) {
-    super(base, property, vts, valueSer, unwrapper, suppressableValue, suppressNulls);
-  }
-
-  @Override
-  protected ReferenceTypeSerializer<JsonOptional<?>> withResolved(
-      BeanProperty prop,
-      TypeSerializer vts,
-      JsonSerializer<?> valueSer,
-      NameTransformer unwrapper) {
-    if ((_property == prop)
-        && (_valueTypeSerializer == vts)
-        && (_valueSerializer == valueSer)
-        && (_unwrapper == unwrapper)) {
-      return this;
+    public JsonOptionalSerializer(
+        ReferenceType fullType,
+        boolean staticTyping,
+        TypeSerializer vts,
+        JsonSerializer<Object> ser
+    ) {
+        super(fullType, staticTyping, vts, ser);
     }
-    return new JsonOptionalSerializer(
-        this, prop, vts, valueSer, unwrapper, _suppressableValue, _suppressNulls);
-  }
 
-  @Override
-  public ReferenceTypeSerializer<JsonOptional<?>> withContentInclusion(
-      Object suppressableValue, boolean suppressNulls) {
-    return new JsonOptionalSerializer(
-        this,
-        _property,
-        _valueTypeSerializer,
-        _valueSerializer,
-        _unwrapper,
-        suppressableValue,
-        suppressNulls);
-  }
+    public JsonOptionalSerializer(
+        JsonOptionalSerializer base,
+        BeanProperty property,
+        TypeSerializer vts,
+        JsonSerializer<?> valueSer,
+        NameTransformer unwrapper,
+        Object suppressableValue,
+        boolean suppressNulls
+    ) {
+        super(base, property, vts, valueSer, unwrapper, suppressableValue, suppressNulls);
+    }
 
-  @Override
-  protected boolean _isValuePresent(JsonOptional<?> value) {
-    return value.isPresent();
-  }
+    @Override
+    protected ReferenceTypeSerializer<JsonOptional<?>> withResolved(
+        BeanProperty prop,
+        TypeSerializer vts,
+        JsonSerializer<?> valueSer,
+        NameTransformer unwrapper
+    ) {
+        if ((_property == prop)
+            && (_valueTypeSerializer == vts)
+            && (_valueSerializer == valueSer)
+            && (_unwrapper == unwrapper)) {
+            return this;
+        }
+        return new JsonOptionalSerializer(
+            this, prop, vts, valueSer, unwrapper, _suppressableValue, _suppressNulls);
+    }
 
-  @Override
-  protected Object _getReferenced(JsonOptional<?> value) {
-    return value.get();
-  }
+    @Override
+    public ReferenceTypeSerializer<JsonOptional<?>> withContentInclusion(
+        Object suppressableValue, boolean suppressNulls
+    ) {
+        return new JsonOptionalSerializer(
+            this,
+            _property,
+            _valueTypeSerializer,
+            _valueSerializer,
+            _unwrapper,
+            suppressableValue,
+            suppressNulls);
+    }
 
-  @Override
-  protected Object _getReferencedIfPresent(JsonOptional<?> value) {
-    return value.isPresent() ? value.get() : null;
-  }
+    @Override
+    protected boolean _isValuePresent(JsonOptional<?> value) {
+        return value.isPresent();
+    }
+
+    @Override
+    protected Object _getReferenced(JsonOptional<?> value) {
+        return value.get();
+    }
+
+    @Override
+    protected Object _getReferencedIfPresent(JsonOptional<?> value) {
+        return value.isPresent() ? value.get() : null;
+    }
 }
