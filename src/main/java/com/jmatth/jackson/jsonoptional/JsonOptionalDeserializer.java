@@ -1,42 +1,50 @@
 package com.jmatth.jackson.jsonoptional;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
-import java.io.IOException;
+import com.fasterxml.jackson.databind.deser.ValueInstantiator;
+import com.fasterxml.jackson.databind.deser.std.ReferenceTypeDeserializer;
+import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
 
-public class JsonOptionalDeserializer extends JsonDeserializer<JsonOptional<?>>
-    implements ContextualDeserializer {
+public class JsonOptionalDeserializer extends ReferenceTypeDeserializer<JsonOptional<?>> {
 
-  private JavaType _valueType;
-
-  @Override
-  public JsonDeserializer<?> createContextual(
-      final DeserializationContext ctxt, final BeanProperty property) throws JsonMappingException {
-    final JavaType javaType = property.getType().containedType(0);
-    final JsonOptionalDeserializer jsonOptionalDeserializer = new JsonOptionalDeserializer();
-    jsonOptionalDeserializer._valueType = javaType;
-    return jsonOptionalDeserializer;
+  public JsonOptionalDeserializer(
+      final JavaType fullType,
+      final ValueInstantiator inst,
+      final TypeDeserializer typeDeser,
+      final JsonDeserializer<?> deser) {
+    super(fullType, inst, typeDeser, deser);
   }
 
   @Override
-  public JsonOptional<?> deserialize(final JsonParser p, final DeserializationContext ctxt)
-      throws IOException, JsonProcessingException {
-    final JsonDeserializer<Object> nonContextualValueDeserializer =
-        ctxt.findNonContextualValueDeserializer(_valueType);
-
-    final Object deserialize = nonContextualValueDeserializer.deserialize(p, ctxt);
-    return JsonOptional.of(deserialize);
+  public JsonOptionalDeserializer withResolved(
+      final TypeDeserializer typeDeser, final JsonDeserializer<?> valueDeser) {
+    return new JsonOptionalDeserializer(_fullType, _valueInstantiator, typeDeser, valueDeser);
   }
 
   @Override
-  public JsonOptional<?> getNullValue(final DeserializationContext ctxt)
-      throws JsonMappingException {
+  public JsonOptional<?> getNullValue(final DeserializationContext ctxt) {
     return JsonOptional.empty();
+  }
+
+  @Override
+  public Object getEmptyValue(final DeserializationContext ctxt) {
+    return super.getEmptyValue(ctxt);
+  }
+
+  @Override
+  public JsonOptional<?> referenceValue(final Object contents) {
+    return JsonOptional.ofNullable(contents);
+  }
+
+  @Override
+  public Object getReferenced(final JsonOptional<?> reference) {
+    return reference.get();
+  }
+
+  @Override
+  public JsonOptional<?> updateReference(final JsonOptional<?> reference, final Object contents) {
+    return JsonOptional.ofNullable(contents);
   }
 }
