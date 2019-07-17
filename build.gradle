@@ -3,9 +3,9 @@ plugins {
 }
 
 group 'com.jmatth'
-version '1.0-SNAPSHOT'
+version '1.0'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 1.11
 
 repositories {
     mavenCentral()
@@ -15,4 +15,12 @@ dependencies {
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.8'
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+test {
+    useJUnit()
+    maxHeapSize = '2G'
+    filter {
+        includeTestsMatching "*Test"
+    }
 }
