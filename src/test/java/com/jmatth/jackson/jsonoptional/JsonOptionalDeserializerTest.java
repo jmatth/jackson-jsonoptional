@@ -17,28 +17,28 @@ public class JsonOptionalDeserializerTest {
     }
 
     @Test
-    public void testPrimitiveDeserialization_value() throws Exception {
+    public void testBasicDeserialization_value() throws Exception {
         final ObjectMapper mapper = mapperWithModule();
         final String json = "{ \"number\": 1 }";
-        final PrimitiveObject primitiveObject = mapper.readValue(json, PrimitiveObject.class);
+        final BasicObject primitiveObject = mapper.readValue(json, BasicObject.class);
         assertTrue(primitiveObject.getNumber().isPresent());
         assertEquals(1, primitiveObject.getNumber().get().intValue());
     }
 
     @Test
-    public void testPrimitiveDeserialization_null() throws Exception {
+    public void testBasicDeserialization_null() throws Exception {
         final ObjectMapper mapper = mapperWithModule();
         final String json = "{ \"number\": null }";
-        final PrimitiveObject primitiveObject = mapper.readValue(json, PrimitiveObject.class);
+        final BasicObject primitiveObject = mapper.readValue(json, BasicObject.class);
         assertTrue(primitiveObject.getNumber().isSet());
         assertFalse(primitiveObject.getNumber().isPresent());
     }
 
     @Test
-    public void testPrimitiveDeserialization_unset() throws Exception {
+    public void testBasicDeserialization_unset() throws Exception {
         final ObjectMapper mapper = mapperWithModule();
         final String json = "{ }";
-        final PrimitiveObject primitiveObject = mapper.readValue(json, PrimitiveObject.class);
+        final BasicObject primitiveObject = mapper.readValue(json, BasicObject.class);
         assertFalse(primitiveObject.getNumber().isSet());
     }
 
@@ -77,7 +77,7 @@ public class JsonOptionalDeserializerTest {
         assertFalse(nestedObject.getNumbers().isSet());
     }
 
-    private static class PrimitiveObject {
+    public static class BasicObject {
         @JsonProperty("number")
         private JsonOptional<Integer> number = JsonOptional.unset();
 
@@ -86,7 +86,7 @@ public class JsonOptionalDeserializerTest {
         }
     }
 
-    private static class NestedObject {
+    public static class NestedObject {
         @JsonProperty("numbers")
         private JsonOptional<List<Integer>> numbers = JsonOptional.unset();
 
