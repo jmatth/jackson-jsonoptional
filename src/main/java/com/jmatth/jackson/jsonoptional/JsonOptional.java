@@ -41,6 +41,21 @@ public final class JsonOptional<T> {
         return value == null ? empty() : of(value);
     }
 
+    public Optional<T> toOptional() {
+        return value != null ? value : Optional.empty();
+    }
+
+    public JsonOptional<T> setOr(final Supplier<? extends JsonOptional<? extends T>> supplier) {
+        Objects.requireNonNull(supplier);
+        if (isSet()) {
+            return this;
+        } else {
+            @SuppressWarnings("unchecked")
+            JsonOptional<T> r = (JsonOptional<T>) supplier.get();
+            return Objects.requireNonNull(r);
+        }
+    }
+
     public T get() {
         if (value == null) {
             throw new NoSuchElementException("No value present");
@@ -70,6 +85,12 @@ public final class JsonOptional<T> {
         }
     }
 
+    public void ifSet(final Consumer<? super T> action) {
+        if (value != null) {
+            action.accept(value.orElse(null));
+        }
+    }
+
     public void ifPresentOrElse(final Consumer<? super T> action, final Runnable emptyAction) {
         if (value != null && value.isPresent()) {
             action.accept(value.get());
@@ -87,21 +108,23 @@ public final class JsonOptional<T> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public <U> JsonOptional<U> map(final Function<? super T, ? extends U> mapper) {
         Objects.requireNonNull(mapper);
         if (!isPresent()) {
-            return empty();
+            return (JsonOptional<U>) this;
         } else {
             return JsonOptional.ofNullable(mapper.apply(value.get()));
         }
     }
 
+    @SuppressWarnings("unchecked")
     public <U> JsonOptional<U> flatMap(
         final Function<? super T, ? extends JsonOptional<? extends U>> mapper
     ) {
         Objects.requireNonNull(mapper);
         if (!isPresent()) {
-            return empty();
+            return (JsonOptional<U>) this;
         } else {
             @SuppressWarnings("unchecked")
             JsonOptional<U> r = (JsonOptional<U>) mapper.apply(value.get());
@@ -130,6 +153,10 @@ public final class JsonOptional<T> {
 
     public T orElse(T other) {
         return isPresent() ? value.get() : other;
+    }
+
+    public T setOrElse(T other) {
+        return value != null ? value.orElse(null) : other;
     }
 
     public T orElseGet(Supplier<? extends T> supplier) {
